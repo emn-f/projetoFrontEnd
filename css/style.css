@@ -7,7 +7,8 @@
     --light-text: #757575;
     --bg-light: #F4F6F8;   /* Fundo geral (desktop) */
     --border-color: #E0E0E0;
-    --green-accent: #4CAF50; /* Para botões como "Ver todos" */
+    --green-accent: #4CAF50; /* Para botões como "Ver todos" e destaque mobile nav */
+    --chat-link-color: #3f51b5; /* Cor para links dentro do chat */
 }
 
 * {
@@ -23,7 +24,11 @@ body {
 
 /* --- ESTILOS DA PÁGINA DE LOGIN --- */
 .login-body {
-    background: linear-gradient(180deg, var(--primary-blue) 50%, var(--bg-light) 50%);
+    /* **REMOVA O background: linear-gradient(...); SE EXISTIR** */
+    /* **ADICIONE ESTAS DUAS LINHAS** */
+    background-color: var(--primary-blue); /* Fundo azul por padrão */
+    background-image: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-blue) 300px, var(--bg-light) 300px); /* Gradiente para "cortar" */
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -51,8 +56,7 @@ body {
 .login-logo {
     width: 180px;
     margin-bottom: 0.5rem;
-    /* Filtro para deixar a logo branca (se a original for preta) */
-    /* filter: brightness(0) invert(1); */ 
+    /* FILTRO REMOVIDO AQUI: A logo aparecerá em sua cor original */
 }
 
 .login-subtitle {
@@ -142,6 +146,15 @@ body {
 .app-container {
     display: flex;
     height: 100vh;
+    overflow: hidden; /* Evita scroll indesejado no container principal */
+}
+
+/* NOVO WRAPPER PARA CONTEÚDO PRINCIPAL E HEADERS MOBILE */
+.content-wrapper {
+    flex: 1; /* Ocupa o espaço restante ao lado da sidebar */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Garante que main-content possa rolar sem vazar */
 }
 
 /* --- BARRA LATERAL (DESKTOP) --- */
@@ -152,16 +165,23 @@ body {
     display: flex;
     flex-direction: column;
     padding: 1.5rem;
+    flex-shrink: 0; /* Impede que a sidebar diminua */
 }
 .sidebar-header {
     margin-bottom: 2rem;
+    text-align: center; /* Centraliza o texto */
 }
-.sidebar-logo {
-    width: 150px;
-    filter: brightness(0) invert(1); /* Deixa a logo branca */
+.sidebar-title { /* Novo estilo para o texto "FiveMinds" */
+    font-size: 2rem; /* Tamanho da fonte */
+    font-weight: bold; /* Negrito */
+    color: var(--white); /* Cor do texto branco */
+    /* Se a fonte da sua logo for específica e você tiver um webfont, adicione aqui */
+}
+/* Removido .sidebar-logo, pois agora é texto */
+.sidebar-nav {
+    list-style: none; /* Remove bullets */
 }
 .sidebar-nav .nav-item {
-    list-style: none;
     margin-bottom: 1rem;
 }
 .sidebar-nav .nav-item a {
@@ -174,6 +194,7 @@ body {
     gap: 0.75rem;
     padding: 0.75rem;
     border-radius: 8px;
+    transition: background-color 0.2s;
 }
 .sidebar-nav .nav-item a:hover {
     background-color: rgba(255, 255, 255, 0.1);
@@ -183,16 +204,17 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* --- CONTEÚDO PRINCIPAL (DESKTOP) --- */
+/* --- CONTEÚDO PRINCIPAL --- */
 .main-content {
-    flex: 1;
-    overflow-y: auto;
+    flex: 1; /* Ocupa todo o espaço vertical restante no content-wrapper */
+    overflow-y: auto; /* Permite scroll se o conteúdo for grande */
     padding: 2rem;
+    background-color: var(--bg-light); /* Fundo da área de conteúdo */
 }
 
 /* --- HEADER E NAV (MOBILE) --- */
 .mobile-header, .mobile-nav {
-    display: none; /* Escondidos no desktop */
+    display: none; /* Escondidos no desktop POR PADRÃO */
 }
 
 /* --- COMPONENTES GERAIS --- */
@@ -214,6 +236,7 @@ body {
 }
 .search-bar-link {
     text-decoration: none;
+    color: inherit; /* Garante que o texto dentro seja da cor padrão */
 }
 .search-bar i {
     color: var(--light-text);
@@ -225,7 +248,12 @@ body {
     outline: none;
     font-size: 1rem;
     background: transparent;
+    color: var(--dark-text); /* Garante que o texto digitado seja escuro */
 }
+.search-bar input::placeholder {
+    color: var(--light-text);
+}
+
 
 .content-section {
     margin-bottom: 2rem;
@@ -383,6 +411,7 @@ body {
     gap: 0.5rem;
     margin-bottom: 0.5rem;
     font-weight: 500;
+    color: var(--dark-text);
 }
 .integrantes-list i {
     color: var(--primary-blue);
@@ -454,8 +483,9 @@ body {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--primary-blue);
+    color: var(--chat-link-color); /* Usando uma cor mais escura para link de chat */
     font-weight: 600;
+    text-decoration: none; /* Remover sublinhado */
 }
 
 .chat-input-area {
@@ -464,6 +494,7 @@ body {
     padding: 1rem;
     background: var(--white);
     border-top: 1px solid var(--border-color);
+    flex-shrink: 0; /* Impede que a área de input encolha */
 }
 .chat-input-area input {
     flex: 1;
@@ -471,7 +502,7 @@ body {
     border-radius: 99px;
     padding: 0.75rem 1rem;
     font-size: 1rem;
-    margin: 0 1rem;
+    margin: 0 0.5rem; /* Ajuste para ter espaço nas laterais */
 }
 .chat-input-area i {
     font-size: 1.25rem;
@@ -482,45 +513,43 @@ body {
     display: flex;
 }
 .mobile-input {
-    display: none;
+    display: none; /* Escondido no desktop */
 }
-.chat-header.mobile-header,
-.chat-nav.mobile-nav {
-    display: none; /* Escondidos no desktop */
-}
+/* chat-header.mobile-header e chat-nav.mobile-nav são controlados por media query */
+
 
 /* --- RESPONSIVIDADE (Mobile-first a partir daqui) --- */
 @media (max-width: 768px) {
     /* --- Esconde Desktop, Mostra Mobile --- */
     .sidebar {
-        display: none;
+        display: none; /* Esconde a sidebar no mobile */
     }
     .main-content {
         padding: 1rem;
-        /* Espaço para o rodapé fixo */
-        padding-bottom: 100px;
+        padding-bottom: 80px; /* Espaço para o rodapé fixo mobile-nav */
     }
 
+    /* Mobile Header ( topo da tela ) */
     .mobile-header {
-        display: flex;
-        justify-content: space-between;
+        display: flex; /* Mostra o header mobile */
+        justify-content: center; /* Centraliza a logo */
         align-items: center;
         background: var(--primary-blue);
         color: var(--white);
         padding: 1rem;
-        position: sticky;
+        position: sticky; /* Fica fixo ao rolar */
         top: 0;
         z-index: 100;
+        min-height: 60px; /* Altura mínima para o header */
     }
-    .header-logo {
-        width: 120px;
-        filter: brightness(0) invert(1);
+    .header-title-mobile { /* Novo estilo para o texto "FiveMinds" no header mobile */
+        font-size: 1.8rem; /* Tamanho da fonte */
+        font-weight: bold; /* Negrito */
+        color: var(--white); /* Cor do texto branco */
+        /* Se a fonte da sua logo for específica e você tiver um webfont, adicione aqui */
     }
-    .status-icons {
-        display: flex;
-        gap: 0.5rem;
-    }
-
+    
+    /* Mobile Navigation ( rodapé da tela ) */
     .mobile-nav {
         position: fixed;
         bottom: 0;
@@ -529,10 +558,11 @@ body {
         background: var(--white);
         border-top: 1px solid var(--border-color);
         box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
-        display: flex;
+        display: flex; /* Mostra a nav mobile */
         justify-content: space-around;
         padding: 0.5rem 0;
         z-index: 100;
+        min-height: 70px; /* Altura mínima para a nav */
     }
     .mobile-nav .nav-item {
         display: flex;
@@ -542,12 +572,13 @@ body {
         color: var(--light-text);
         font-size: 0.75rem;
         gap: 0.25rem;
+        padding: 0.5rem; /* Área de clique maior */
     }
     .mobile-nav .nav-item i {
         font-size: 1.25rem;
     }
     .mobile-nav .nav-item.active {
-        color: var(--primary-blue);
+        color: var(--primary-blue); /* Ícone ativo azul */
     }
     .mobile-nav .nav-item.active span {
         /* A "bolinha" verde do protótipo */
@@ -555,6 +586,7 @@ body {
         color: var(--white);
         padding: 0.25rem 0.75rem;
         border-radius: 99px;
+        font-size: 0.7rem; /* Texto menor para a bolinha */
     }
 
     /* --- Ajustes de Componentes --- */
@@ -567,53 +599,81 @@ body {
     .search-bar {
         margin-top: 1rem;
     }
+    .content-wrapper {
+        padding-bottom: 70px; /* espaço para o nav bar mobile */
+    }
 
-    /* --- Ajustes do Chat Mobile --- */
+
+    /* --- Ajustes da Página de Chat Mobile --- */
     .chat-container {
-        padding: 0;
-        padding-bottom: 100px; /* Espaço para nav e input */
+        padding: 0; /* Remove padding lateral no mobile */
+        padding-bottom: 120px; /* Espaço para nav e input do chat */
     }
     .chat-header-desktop, .desktop-input {
-        display: none; /* Esconde inputs de desktop */
+        display: none; /* Esconde elementos desktop no chat mobile */
     }
     .chat-header.mobile-header {
-        display: flex;
-        position: sticky;
-        top: 0;
+        display: flex; /* Mostra o header do chat mobile */
+        justify-content: flex-start; /* Alinha o conteúdo à esquerda */
+        padding: 0.75rem 1rem; /* Ajusta padding */
+    }
+    .chat-header a { /* Seta de voltar */
+        color: var(--white);
+        font-size: 1.5rem;
+        margin-right: 1rem;
     }
     .chat-header .header-title {
+        flex: 1; /* Ocupa o espaço entre a seta e os ícones de status */
         display: flex;
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        align-items: flex-start; /* Alinha texto à esquerda */
+        text-align: left;
     }
-    .chat-header a {
-        color: var(--white);
-        font-size: 1.25rem;
+    .chat-header .header-title strong {
+        font-size: 1.1rem;
+    }
+    .chat-header .header-title small {
+        font-size: 0.85rem;
+        opacity: 0.8;
     }
 
     .chat-nav.mobile-nav {
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 0;
+        flex-direction: column; /* Input e nav um abaixo do outro */
+        min-height: auto;
+        padding: 0;
     }
-    .chat-nav .mobile-input {
-        display: flex;
-        border-top: 1px solid var(--border-color);
-    }
-    .chat-nav .nav-item-row {
+    .chat-nav-bottom-bar { /* Para os 3 botões (Chat, Arquivos, Config) */
         display: flex;
         justify-content: space-around;
         width: 100%;
         padding: 0.5rem 0;
+        border-top: 1px solid var(--border-color); /* Adiciona borda se houver input acima */
     }
-    /* (Simplifiquei a nav do chat para ficar igual à nav Home, por clareza) */
-    /* Para replicar o Figma 100%, seria necessário JS para trocar o input */
+    .chat-input-area.mobile-input { /* Área de input do chat no mobile */
+        display: flex;
+        border-top: none; /* A borda já está na barra superior */
+    }
+    .chat-input-area.mobile-input input {
+        margin: 0 0.5rem; /* Margens laterais */
+    }
     
     .chat-messages {
         padding: 1rem;
     }
     .message-bubble {
         max-width: 80%;
+    }
+}
+
+/* Ajustes para telas maiores que desktop (se necessário, ex: TVs ou monitores ultrawide) */
+@media (min-width: 1200px) {
+    .main-content {
+        padding: 2rem 4rem; /* Mais espaço nas laterais para conteúdo desktop */
+    }
+    .grid-container-2col {
+        grid-template-columns: repeat(5, 1fr); /* Exemplo: 5 colunas em telas muito grandes */
+    }
+    .list-container {
+        grid-template-columns: repeat(3, 1fr); /* Exemplo: 3 colunas em telas muito grandes */
     }
 }
